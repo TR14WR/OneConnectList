@@ -62,7 +62,10 @@ int main() {
   intlist.printNode();
   cout << intlist[2];*/
 
-
+  for (auto var : intlist)
+  {
+    cout << var << endl;
+  }
 
 
   intlist.clear();
