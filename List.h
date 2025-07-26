@@ -1,9 +1,10 @@
 #pragma once
-#pragma once
 #include <iostream> 
 
 using namespace std;
 
+template<class T>
+concept default_initializable = constructible_from<T> && requires{T{}; ::new T; };
 template<class T>
 struct ForwardList
 {
@@ -17,13 +18,13 @@ private:
 
 	Node* Head;
 	Node* End;
-	static Node ForwardListEnd;
+	static inline Node ForwardListEnd{ T(), nullptr };
 	int Size;
 public:
 
-	 ForwardList() noexcept : Head(&ForwardListEnd), End(&ForwardListEnd), Size(0) {}
+	ForwardList() noexcept : Head(&ForwardListEnd), End(&ForwardListEnd), Size(0) {}
 
-	 ~ForwardList()
+	~ForwardList()
 	{
 		clear();
 	}
@@ -159,11 +160,11 @@ public:
 	struct Iterator1
 	{
 		Iterator1(Node* start) : current(start) {}
-
+		//разыменование
 		T& operator*() {
 			return current->data;
 		}
-
+		//константное разыменование
 		const T& operator*() const
 		{
 			return current->data;
@@ -176,7 +177,7 @@ public:
 		bool operator!=(const Iterator1& other) const {
 			return !(*this == other);
 		}
-
+		//
 		Iterator1& operator++() {
 			if (current != nullptr && current != &ForwardListEnd)
 				current = current->ptr;
@@ -202,7 +203,7 @@ public:
 
 	using const_Iterator1 = const Iterator1;
 
-	constexpr bool remove(Iterator1 Iter) {
+	bool remove_after(Iterator1 Iter) {
 		if (Iter == Head) {
 			popFront();
 			return true;
@@ -232,7 +233,7 @@ public:
 		}
 	}
 
-	constexpr bool insert(T data, Iterator1 Iter)
+	constexpr bool insert_after(const T& data, Iterator1 Iter)
 	{
 
 		if (Iter == Head)
@@ -259,8 +260,3 @@ public:
 	}
 
 };
-
-template<class T>
-typename ForwardList<T>::Node ForwardList<T>::ForwardListEnd = typename ForwardList<T>::Node(T(), nullptr);
-
-
